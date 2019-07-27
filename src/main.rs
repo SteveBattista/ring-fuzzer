@@ -6,15 +6,15 @@ use std::error::Error;
 use ring::aead::*;
 use ring::digest::{Context, SHA256, SHA384, SHA512, SHA512_256, Digest};
 
-fn test_digest(data :&[u8], aglo: &digest::Algorithm )-> Result<Digest, Box<dyn Error>> {
+fn test_digest(data :u8[32], aglo: &digest::Algorithm )-> Result<Digest, Box<dyn Error>> {
     let mut context = Context::new(aglo);
     context.update(data);
-    Ok(context.finish())
+    context.finish()?
 }
 
 fn test_aead(key : &mut u8, data :&[u8], aglo: &aead::Algorithmm ) {
     let content = data.to_vec();
-
+ 
     // Ring uses the same input variable as output
     let mut in_out = content.clone();
 
