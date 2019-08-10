@@ -1,0 +1,15 @@
+[package]
+name = "ring-fuzzer"
+version = "0.1.0"
+authors = ["Stephen Battista <stephen.battista@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+honggfuzz = "0.5"
+ring = "0.16.5"
+rand = "0.7.0"
+data-encoding = "2.1.2"
+untrusted = "0.6.2"
+arrayref = "0.3.5"
