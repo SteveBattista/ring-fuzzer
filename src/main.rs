@@ -123,17 +123,17 @@ fn test_hkdf(
     _random1: &[u8],
     random2: &[u8],
     key: &[u8],
-    algo: &'static ring::hkdf::Algorithm,
+    algo: ring::hkdf::Algorithm,
 ) {
     //println!("datalen: {} , random1len {} , random2len {}, keylen {}",data.len(),random1.len(),random2.len(),key.len());
-    let salt = ring::hkdf::Salt::new(*algo, key);
+    let salt = ring::hkdf::Salt::new(algo, key);
     let prk = salt.extract(key);
     let My(_out) = prk.expand(&[&data], My(random2.len())).unwrap().into();
     //println!("HDKF: {}", BASE64.encode(out.as_ref()));
 }
 
-fn test_hmac(key: &[u8], data: &[u8], algo: &'static ring::hmac::Algorithm) {
-    let key = ring::hmac::Key::new(*algo, key);
+fn test_hmac(key: &[u8], data: &[u8], algo: ring::hmac::Algorithm) {
+    let key = ring::hmac::Key::new(algo, key);
     let signature = ring::hmac::sign(&key, data);
     assert_eq!(
         true,
@@ -145,13 +145,13 @@ fn test_pbkdf2(
     data: &[u8],
     random1: &[u8],
     random2: &[u8],
-    algo: &'static ring::pbkdf2::Algorithm,
+    algo:ring::pbkdf2::Algorithm,
 ) {
     let mut out = vec![0; random1.len()];
     let iterations = random2.len();
     let iterations = std::num::NonZeroU32::new(iterations as u32).unwrap();
-    ring::pbkdf2::derive(*algo, iterations, &random2, &data, &mut out);
-    let answer = ring::pbkdf2::verify(*algo, iterations, &random2, &data, out.as_ref());
+    ring::pbkdf2::derive(algo, iterations, &random2, &data, &mut out);
+    let answer = ring::pbkdf2::verify(algo, iterations, &random2, &data, out.as_ref());
     //println!("out: {}", BASE64.encode(out.as_ref()));
     assert_eq!(answer, Ok(()));
 }
@@ -300,19 +300,19 @@ fn main() {
         test_digest(data, &SHA512_256);
         //println!("done digest");
 
-        test_hkdf(data, random1, random2, &key[..KEY256], &HKDF_SHA256);
-        test_hkdf(data, random1, random2, &key[..KEY256], &HKDF_SHA384);
-        test_hkdf(data, random1, random2, &key[..KEY256], &HKDF_SHA512);
+        test_hkdf(data, random1, random2, &key[..KEY256], HKDF_SHA256);
+        test_hkdf(data, random1, random2, &key[..KEY256], HKDF_SHA384);
+        test_hkdf(data, random1, random2, &key[..KEY256], HKDF_SHA512);
         //println!("done hkdf");
 
-        test_hmac(data, &key[..KEY256], &HMAC_SHA256);
-        test_hmac(data, &key[..KEY256], &HMAC_SHA384);
-        test_hmac(data, &key[..KEY256], &HMAC_SHA512);
+        test_hmac(data, &key[..KEY256], HMAC_SHA256);
+        test_hmac(data, &key[..KEY256], HMAC_SHA384);
+        test_hmac(data, &key[..KEY256], HMAC_SHA512);
         //println!("done hmac");
 
-        test_pbkdf2(data, random1, random2, &PBKDF2_HMAC_SHA256);
-        test_pbkdf2(data, random1, random2, &PBKDF2_HMAC_SHA384);
-        test_pbkdf2(data, random1, random2, &PBKDF2_HMAC_SHA512);
+        test_pbkdf2(data, random1, random2, PBKDF2_HMAC_SHA256);
+        test_pbkdf2(data, random1, random2, PBKDF2_HMAC_SHA384);
+        test_pbkdf2(data, random1, random2, PBKDF2_HMAC_SHA512);
         //println!("done pbkdf2");
 
         test_ecdsa(data, &key[..KEY256],&ECDSA_P256_SHA256_FIXED_SIGNING,&ECDSA_P256_SHA256_FIXED);
